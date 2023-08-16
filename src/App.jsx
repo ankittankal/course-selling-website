@@ -5,7 +5,6 @@ import CreateCourse from './components/CreateCourse';
 import Register from './components/Register';
 import ShowCourses from './components/ShowCourses';
 import ButtonAppBar from "./components/AppBar";
-import Course  from "./components/Course";
 import CourseEdit from "./components/CourseEdit";
 
 // This file shows how we can do routing in React.

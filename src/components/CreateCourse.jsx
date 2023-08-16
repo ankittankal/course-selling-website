@@ -1,9 +1,8 @@
 import React from "react";
 import { TextField, Card} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 
-// You need to add input boxes to take input for users to create a course.
-// I've added one input so you understand the api to do it.
 function CreateCourse() {
     const [title, setTitle] = React.useState("");
     const [description, setDescription] = React.useState("");
@@ -11,6 +10,21 @@ function CreateCourse() {
     const [imageLink, setImageLink] = React.useState("");
     const [published, setPublished] = React.useState("");
     const navigate = useNavigate();
+
+    const handleOnClick = async () => {
+        const response = await axios.post("http://localhost:3000/admin/courses",{
+            title : title,
+            description : description ,
+            price : price ,
+            imageLink : imageLink ,
+            published : published  },
+        { headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token"),
+          }
+        })
+        let data = response.data;
+        console.log(data.message);
+      }
 
     return (<div>    
         <div style={{display : 'flex' , justifyContent: 'center'}}>
@@ -47,29 +61,7 @@ function CreateCourse() {
             <br></br><br></br>
 
             <button 
-                onClick={() => {
-                    console.log(title)
-                    fetch("http://localhost:3000/admin/courses", {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  "Authorization": "Bearer " + localStorage.getItem("token"),
-                },
-                body: JSON.stringify({
-                    title : title,
-                    description : description ,
-                    price : price ,
-                    imageLink : imageLink ,
-                    published : published ,
-                })
-            })
-                .then(response => {
-                    //console.log("Status code:", response.status);
-                    return response.json()})
-                .then(data => {
-                    console.log("data");
-                })
-                    }}>Create Course</button>
+                onClick={handleOnClick}>Create Course</button>
             <br></br>
             <br></br>
             </div>

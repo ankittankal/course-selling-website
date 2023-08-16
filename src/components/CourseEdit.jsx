@@ -114,7 +114,6 @@ function UpdateCard({course, setCourse}) {
                         price
                     }, {
                         headers: {
-                            "Content-type": "application/json",
                             "Authorization": "Bearer " + localStorage.getItem("token")
                         }
                     });

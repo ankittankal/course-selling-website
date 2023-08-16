@@ -1,50 +1,31 @@
 import React from "react";
 import { TextField, Card, Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Register() {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const navigate = useNavigate();
 
-    const handleNextClick = () => {
-        fetch("http://localhost:3000/admin/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password,
-            })
-        })
-        .then(response => {
-            console.log("Status code:", response.status);
-            if (response.status === 200) {
-                return response.json();
-            } else {
-                throw new Error("Login failed"); // Handle other status codes if needed
-            }
-        })
-        .then(data => {
-            localStorage.setItem("token", data.token);
-            console.log(data);
-            navigate('/courses'); // Redirect to the desired route
-        })
-        .catch(error => {
-            console.error(error);
+    const handleNextClick = async () => {
+        const response = await axios.post("http://localhost:3000/admin/login", {
+          username: username,
+          password: password,
         });
-    };
+      
+          let data = response.data;
+          localStorage.setItem("token", data.token);
+          console.log(data.message);
+          navigate('/courses'); // Navigate to success route
+      }
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{ textAlign: 'center' }}>
-                <br />
+            <div style={{ textAlign: 'center' }}> <br />
 
-                <Card variant="outlined"
-                      style={{ width: '400px', padding: '60px' }} >
+                <Card variant="outlined" style={{ width: '400px', padding: '60px' }} >
                     <div>
-
                         <Typography style={{ textAlign: 'left', fontWeight: 'bold' }} variant={"h5"} >Login</Typography>
                         <br></br>
 

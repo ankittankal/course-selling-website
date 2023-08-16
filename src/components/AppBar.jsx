@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 
 function ButtonAppBar() {
     const [username,setUserName] = React.useState();
@@ -17,24 +17,18 @@ function ButtonAppBar() {
     useEffect(() => {
         //console.log("I run everytime this component rerenders")
 
-        fetch("http://localhost:3000/admin/me", {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  "Authorization": "Bearer " + localStorage.getItem("token"),
-                }})
-                .then(response => {
-                    //console.log("Status code:", response.status);
-                    //setStatusCode(response.status);
-                    return response.json()})
-                .then(data => {
-                    //localStorage.setItem("token", data.token);
-                    console.log(data);
-                    setUserName(data.username);
-                    //if (statusCode === 200) {
-                    //    navigate('/createCourse'); // Navigate to success route
-                    //}
-                })
+      axios.get("http://localhost:3000/admin/me",
+        { headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token"),
+          }
+      })
+        .then(response => {
+          let data = response.data;
+          console.log(data);
+          setUserName(data.username);
+        })
+        .catch(error => console.error(error));
+
     },[]);
 
     if(username){
@@ -85,39 +79,37 @@ function ButtonAppBar() {
     }
 
     return (
-    <Box sx={{ flexGrow: 1}}>
-
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          LearnVista
-          </Typography>
-          <Button 
-            color='inherit'
-            onClick={()=> {
-              navigate('/register');
-            }}
-                >Sign up</Button>
-          <Button 
-            color="inherit"
-            onClick={()=> {
-              navigate('/login');
-            }}
-            >Log in</Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
+      <Box sx={{ flexGrow: 1}}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            LearnVista
+            </Typography>
+            <Button 
+              color='inherit'
+              onClick={()=> {
+                navigate('/register');
+              }}
+                  >Sign up</Button>
+            <Button 
+              color="inherit"
+              onClick={()=> {
+                navigate('/login');
+              }}
+              >Log in</Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
   );
 }
-
 
 export default ButtonAppBar;

@@ -2,6 +2,7 @@ import React from "react";
 import { TextField, Card, Button, Typography} from "@mui/material";
 import { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function ShowCourses() {
     const [courses, setCourses] = React.useState([]);
@@ -9,25 +10,20 @@ function ShowCourses() {
     useEffect(() => {
         //console.log("I run everytime this component rerenders")
 
-        fetch("http://localhost:3000/admin/courses", {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  "Authorization": "Bearer " + localStorage.getItem("token"),
-                }})
+        axios.get("http://localhost:3000/admin/courses",
+                { headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token"),
+                  }
+              })
                 .then(response => {
-                    console.log("Status code:", response.status);
-                    //setStatusCode(response.status);
-                    return response.json()})
-                .then(data => {
-                    //localStorage.setItem("token", data.token);
-                    console.log("--->",data.courses);
-                    setCourses(data.courses);
+                  let data = response.data;
+                  console.log(data);
+                  setCourses(data.courses);
                 })
+                .catch(error => console.error(error));
+
     },[]);
 
-    // Add code to fetch courses from the server
-    // and set it in the courses state variable.
     return <div style={{display: "flex", flexWrap:"wrap", justifyContent: "center"}}>
         {courses.map(c => <Course Course={c} navigate={useNavigate}/>)}
     </div>

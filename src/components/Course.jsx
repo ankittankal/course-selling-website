@@ -2,6 +2,7 @@ import React from "react";
 import { TextField, Card, Button, Typography} from "@mui/material";
 import { useEffect } from 'react';
 import { useNavigate,useParams } from 'react-router-dom';
+import axios from "axios";
 
 function Course() {
     const [courses, setCourses] = React.useState([]);
@@ -9,19 +10,17 @@ function Course() {
     console.log(courseId);
 
     useEffect(() => {
-        fetch("http://localhost:3000/admin/courses", {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  "Authorization": "Bearer " + localStorage.getItem("token"),
-                }})
+        axios.get("http://localhost:3000/admin/courses",
+                { headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token"),
+                  }
+              })
                 .then(response => {
-                    console.log("Status code:", response.status);
-                    return response.json()})
-                .then(data => {
-                    console.log("--->",data.courses);
-                    setCourses(data.courses);
+                  let data = response.data;
+                  console.log(data);
+                  setCourses(data.courses);
                 })
+                .catch(error => console.error(error));
     },[]);
 
     let courseIdExists = null;
@@ -34,7 +33,7 @@ function Course() {
 
     if(!courseIdExists){
         return (
-            <div>Loadinggg.....</div>
+            <div>Loading.....</div>
         );
     }
     return (
