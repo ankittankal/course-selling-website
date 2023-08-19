@@ -1,4 +1,5 @@
 import * as React from 'react';
+/*--------AppBar Import----------*/
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,32 +7,24 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useEffect } from 'react';
+/*-------------------------------*/
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { isUserLoading } from "../store/selectors/isUserLoading";
+import {useSetRecoilState, useRecoilValue} from "recoil";
+import { userState } from "../store/atoms/user.js";
+import { userEmailState } from "../store/selectors/userEmail"
 
 function ButtonAppBar() {
-    const [username,setUserName] = React.useState();
     const navigate = useNavigate();
+    const userLoading = useRecoilValue(isUserLoading);
+    const userEmail = useRecoilValue(userEmailState);
+    const setUser = useSetRecoilState(userState);
 
-    useEffect(() => {
-        //console.log("I run everytime this component rerenders")
+    if (userLoading) {
+      return <></>
+    }
 
-      axios.get("http://localhost:3000/admin/me",
-        { headers: {
-            "Authorization": "Bearer " + localStorage.getItem("token"),
-          }
-      })
-        .then(response => {
-          let data = response.data;
-          console.log(data);
-          setUserName(data.username);
-        })
-        .catch(error => console.error(error));
-
-    },[]);
-
-    if(username){
+    if(userEmail){
         return (
             <Box sx={{ flexGrow: 1}}>
         
@@ -63,12 +56,15 @@ function ButtonAppBar() {
                         }}
                         >Courses</Button>
 
-                  Hello, {username}
+                  Hello, {userEmail}
                   
                   <Button color="inherit"
                         onClick={()=>{
                             localStorage.setItem("token", null);
-                            window.location = '/';
+                            setUser({
+                              isLoading: false,
+                              userEmail: null
+                            })
                         }}
                         >Logout</Button>
 

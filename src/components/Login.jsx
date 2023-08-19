@@ -2,11 +2,14 @@ import React from "react";
 import { TextField, Card, Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {useSetRecoilState} from "recoil";
+import {userState} from "../store/atoms/user.js";
 
 function Register() {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const navigate = useNavigate();
+    const setUser = useSetRecoilState(userState);
 
     const handleNextClick = async () => {
         const response = await axios.post("http://localhost:3000/admin/login", {
@@ -15,8 +18,9 @@ function Register() {
         });
       
           let data = response.data;
-          localStorage.setItem("token", data.token);
           console.log(data.message);
+          localStorage.setItem("token", data.token);
+          setUser({userEmail: username, isLoading: false});
           navigate('/courses'); // Navigate to success route
       }
 

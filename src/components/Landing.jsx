@@ -34,35 +34,37 @@
 import { Button, Grid, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from 'react-router-dom';
+import {useRecoilValue} from "recoil";
+import { userEmailState } from "../store/selectors/userEmail"
+import {isUserLoading} from "../store/selectors/isUserLoading";
 
 function Landing() {
     const navigate = useNavigate();
+    const userEmail = useRecoilValue(userEmailState);
+    const userLoading = useRecoilValue(isUserLoading);
 
     return (
         <div style={{ textAlign: 'center', padding: '40px' }}>
             <Typography variant="h2" >
                 Welcome to LearnVista
             </Typography>
-            <Grid container justifyContent="center" spacing={2}>
+            {/* {console.log(userEmail)} */}
+            {!userLoading && !userEmail && <Grid container justifyContent="center" spacing={2}>
                 <Grid item>
                     <Button
                         variant="contained"
                         color="primary"
                         onClick={() => navigate('/register')}
-                    >
-                        Sign Up
-                    </Button>
+                    >Sign Up</Button>
                 </Grid>
                 <Grid item>
                     <Button
                         variant="outlined"
                         color="primary"
                         onClick={() => navigate('/login')}
-                    >
-                        Sign In
-                    </Button>
+                    >Sign In</Button>
                 </Grid>
-            </Grid>
+            </Grid>}
             <div style={{ marginTop: '40px' }}>
                 <img style={{ width: '100%', maxWidth: '500px' }} src="src\assets\Admin-HomePage.jpg" alt="image Not Available" />
             </div>
