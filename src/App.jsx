@@ -33,6 +33,7 @@ function App() {
                     userEmail: response.data.username
                 })
             } else {
+                console.log("no username" );
                 setUser({
                     isLoading: false,
                     userEmail: null
@@ -40,7 +41,6 @@ function App() {
             }
         } 
         catch(e){
-
             setUser({
                 isLoading: false,
                 userEmail: null

@@ -1,13 +1,9 @@
 ## Create a course selling website
 
 ### Description
-Functionally the same as 02-course-app-easy. Routes are different though. 
-We now need to implement actual authentication here. 
-We're going to use Json Web Tokens (JWT) for the same. 
-When the user signs up, they should get back a jwt that is valid for 1 hour. 
-They should then send just that jwt vs sending username and password to the authenticated routes.
-
-You need to understand the API of jwt. We will be covering this in the extra recorded session this week.
+Functionally the same as 03-course-app-medium. Routes are the same as well.
+Rather than storing data in files, store them in MongoDB. 
+We will be covering this in the extra class next week but would be good for you to run ahead.
 
 ## Routes
 ### Admin Routes:

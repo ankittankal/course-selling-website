@@ -66,6 +66,22 @@ function UpdateCard() {
     const [image, setImage] = useState(courseDetails.course.imageLink);
     const [price, setPrice] = useState(courseDetails.course.price);
 
+
+        // Initialize local states using courseDetails once it's available
+        // const [title, setTitle] = useState('');
+        // const [description, setDescription] = useState('');
+        // const [image, setImage] = useState('');
+        // const [price, setPrice] = useState('');
+    
+        useEffect(() => {
+            if (courseDetails.course) {
+                setTitle(courseDetails.course.title);
+                setDescription(courseDetails.course.description);
+                setImage(courseDetails.course.imageLink);
+                setPrice(courseDetails.course.price);
+            }
+        }, [courseDetails]);
+
     return <div style={{display: "flex", justifyContent: "center"}}>
     <Card varint={"outlined"} style={{maxWidth: 600, marginTop: 200}}>
         <div style={{padding: 20}}>
@@ -112,11 +128,11 @@ function UpdateCard() {
                 label="Price"
                 variant="outlined"
             />
-
+            {console.log("-------------->>>",courseDetails.course._id)}
             <Button
                 variant="contained"
                 onClick={async () => {
-                    axios.put("http://localhost:3000/admin/courses/" + courseDetails.course.id, {
+                    axios.put("http://localhost:3000/admin/courses/" + courseDetails.course._id, {
                         title: title,
                         description: description,
                         imageLink: image,
@@ -128,11 +144,11 @@ function UpdateCard() {
                         }
                     });
                     let updatedCourse = {
-                        id: courseDetails.course.id,
                         title: title,
                         description: description,
                         imageLink: image,
-                        price
+                        price,
+                        _id : courseDetails.course._id,
                     };
                     setCourse({course: updatedCourse, isLoading: false});
                 }}

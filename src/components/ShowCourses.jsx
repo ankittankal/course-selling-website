@@ -6,7 +6,7 @@ import axios from "axios";
 
 function ShowCourses() {
     const [courses, setCourses] = React.useState([]);
-
+    
     useEffect(() => {
         //console.log("I run everytime this component rerenders")
 
@@ -18,7 +18,7 @@ function ShowCourses() {
                 .then(response => {
                   let data = response.data;
                   console.log(data);
-                  setCourses(data.courses);
+                  setCourses(data);
                 })
                 .catch(error => console.error(error));
 
@@ -31,7 +31,7 @@ function ShowCourses() {
 
 function Course(props) {
     const navigate = useNavigate();
-    let path = '/courses/' + props.Course.id;
+    let path = '/courses/' + props.Course._id;
 
     return <Card style={{margin: 10 , width : 300, minheight : 200}}>
         <Typography textAlign= 'center' variant="h4">{props.Course.title}</Typography>
