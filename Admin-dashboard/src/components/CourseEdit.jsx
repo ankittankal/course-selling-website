@@ -1,17 +1,19 @@
-import { Card, Grid } from "@mui/material";
-import { useEffect, useState } from "react"
+import { Typography, TextField, Button, Card, Grid} from "@mui/material";
+import { useEffect, useState, forwardRef } from "react"
 import { useParams } from 'react-router-dom';
-import { Typography, TextField, Button } from "@mui/material";
-import axios from "axios";
 import { courseState } from "../store/atoms/course";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import { courseTitle, coursePrice, isCourseLoading, courseImage } from "../store/selectors/course";
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import axios from "axios";
 
 function CourseEdit() {
     let { courseId } = useParams();
-    //const [course, setCourse] = useState(null);
     const setCourse = useSetRecoilState(courseState);
     const courseLoading = useRecoilValue(isCourseLoading);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         axios.get("http://localhost:3000/admin/courses/" + courseId, {
@@ -34,13 +36,14 @@ function CourseEdit() {
         <GrayTopper/>
         <Grid container>
             <Grid item lg={8} md={12} sm={12}>
-                {/* <UpdateCard course={course} setCourse={setCourse} /> */}
-                <UpdateCard /> 
+                <UpdateCard setOpen={setOpen}/> 
             </Grid>
             <Grid item lg={4} md={12} sm={12}>
                 <CourseCard/>
             </Grid>
         </Grid>
+
+        <CustomizedSnackbars open={open} setOpen={setOpen}></CustomizedSnackbars>
     </div>
 }
 
@@ -58,14 +61,13 @@ function GrayTopper() {
     </div>
 }
 
-function UpdateCard() {
+function UpdateCard(props) {
     const [courseDetails, setCourse] = useRecoilState(courseState);
 
     const [title, setTitle] = useState(courseDetails.course.title);
     const [description, setDescription] = useState(courseDetails.course.description);
     const [image, setImage] = useState(courseDetails.course.imageLink);
     const [price, setPrice] = useState(courseDetails.course.price);
-
 
         // Initialize local states using courseDetails once it's available
         // const [title, setTitle] = useState('');
@@ -86,6 +88,7 @@ function UpdateCard() {
     <Card varint={"outlined"} style={{maxWidth: 600, marginTop: 200}}>
         <div style={{padding: 20}}>
             <Typography style={{marginBottom: 10}}>Update course details</Typography>
+
             <TextField
                 value={title}
                 style={{marginBottom: 10}}
@@ -96,7 +99,6 @@ function UpdateCard() {
                 label="Title"
                 variant="outlined"
             />
-
             <TextField
                 value={description}
                 style={{marginBottom: 10}}
@@ -107,7 +109,6 @@ function UpdateCard() {
                 label="Description"
                 variant="outlined"
             />
-
             <TextField
                 value={image}
                 style={{marginBottom: 10}}
@@ -128,9 +129,10 @@ function UpdateCard() {
                 label="Price"
                 variant="outlined"
             />
-            {console.log("-------------->>>",courseDetails.course._id)}
+
             <Button
                 variant="contained"
+                style={{ backgroundColor: '#0b2d39' }}
                 onClick={async () => {
                     axios.put("http://localhost:3000/admin/courses/" + courseDetails.course._id, {
                         title: title,
@@ -150,6 +152,8 @@ function UpdateCard() {
                         price,
                         _id : courseDetails.course._id,
                     };
+
+                    props.setOpen(true);
                     setCourse({course: updatedCourse, isLoading: false});
                 }}
             > Update course</Button>
@@ -172,7 +176,7 @@ function CourseCard() {
         paddingBottom: 15,
         zIndex: 2
     }}>
-        <img src={imageLink} style={{width: 350}} ></img>
+        <img src={imageLink} style={{width: 350,height:190}} ></img>
         <div style={{marginLeft: 10}}>
             <Typography variant="h5">{title}</Typography>
             <Price/>
@@ -193,5 +197,33 @@ function Price() {
         </Typography>
         </>)
 }
+
+function CustomizedSnackbars({open,setOpen}) {
+    const Alert = forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+      });
+  
+    const handleClick = () => {
+      setOpen(true);
+    };
+  
+    const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpen(false);
+    };
+  
+    return (
+      <Stack spacing={2} sx={{ width: '100%' }}>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+            Course Details Edited Successfully !
+          </Alert>
+        </Snackbar>
+      </Stack>
+    );
+  }
 
 export default CourseEdit;
