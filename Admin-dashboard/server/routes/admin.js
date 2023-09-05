@@ -20,21 +20,21 @@ router.post('/signup', (req, res) => {
         const obj = { username: username, password: password };
         const newAdmin = new Admin(obj);
         newAdmin.save();
-        const token = jwt.sign({ username, role: 'admin' }, SECRET, { expiresIn: '1h' });
+        const token = jwt.sign( {id: newAdmin._id}, SECRET, { expiresIn: '1h' });
         res.json({ message: 'Admin created successfully', token });
       }
   
     }
   
-    Admin.findOne({ username }).then(callback);
+    Admin.findOne({ username,password }).then(callback);
   });
   
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
   
-    const admin = await Admin.findOne({ username });
+    const admin = await Admin.findOne({ username,password });
     if (admin) {
-      const token = jwt.sign({ username, role: 'admin' }, SECRET, { expiresIn: '1h' });
+      const token = jwt.sign( {id : admin._id}, SECRET, { expiresIn: '1h' });
       res.json({ message: 'Admin logged in successfully', token });
     } else {
       res.status(403).json({ message: 'Invalid username or password' });
@@ -42,11 +42,15 @@ router.post('/login', async (req, res) => {
   
 });
 
-router.get('/me' , authenticateJwt , (req,res) => {
-    console.log(req.user);
-    res.json({
-      username : req.user.username
-    });
+router.get('/me' , authenticateJwt ,async (req,res) => {
+  const admin = await Admin.findOne({_id: req.userId});
+  
+  console.log(req.user);
+  if(admin){
+    res.json({username : admin.username});
+  }else{
+    res.status(403).json({message: "Admin not found"});
+  }
 });
   
 router.post('/courses', authenticateJwt, async (req, res) => {
@@ -77,6 +81,19 @@ router.get('/courses/:courseId', authenticateJwt, async (req, res) => {
   
   if (course) {
     res.json({ course });
+  } else {
+    res.status(404).json({ message: 'Course not found' });
+  }
+});
+
+router.delete('/courses/:courseId', authenticateJwt, async (req, res) => {
+  let ID = req.params.courseId;
+  let CourseIdExists = false;
+
+  const course = await Course.findByIdAndDelete({ _id: ID });
+  // console.log(course);
+  if (course) {
+    res.json({ message: 'Course deleted successfully' })
   } else {
     res.status(404).json({ message: 'Course not found' });
   }

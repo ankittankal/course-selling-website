@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import SwipeableTemporaryDrawer from "./SideBar";
 /*-------------------------------*/
 import { useNavigate } from 'react-router-dom';
 import { isUserLoading } from "../store/selectors/isUserLoading";
@@ -20,6 +21,26 @@ function ButtonAppBar() {
     const userEmail = useRecoilValue(userEmailState);
     const setUser = useSetRecoilState(userState);
 
+    const [state, setState] = React.useState({
+       top: false,
+       left: false,
+       bottom: false,
+       right: false,
+    });
+  
+    const toggleDrawer = (anchor, open) => (event) => {
+      if (
+        event &&
+        event.type === 'keydown' &&
+        (event.key === 'Tab' || event.key === 'Shift')
+      ) {
+        return;
+      }
+  
+      setState({ ...state, [anchor]: open });
+    };
+
+
     if (userLoading) {
       return <></>
     }
@@ -28,7 +49,7 @@ function ButtonAppBar() {
         return (
             <Box sx={{ flexGrow: 1}}>
         
-              <AppBar position="static">
+              <AppBar position="static" style={{ backgroundColor: '#0b2d39' }}>
                 <Toolbar>
                   <IconButton
                     size="large"
@@ -36,27 +57,16 @@ function ButtonAppBar() {
                     color="inherit"
                     aria-label="menu"
                     sx={{ mr: 2 }}
+
+                    onClick={toggleDrawer("left", true)}
                   >
                     <MenuIcon />
                   </IconButton>
 
                   <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    CourseHub
+                    LearnVista
                   </Typography>
-
-                  <Button color="inherit"
-                        onClick={()=>{
-                          navigate('/createCourse');
-                        }}
-                        >New Course</Button>
-
-                  <Button color="inherit"
-                        onClick={()=>{
-                          navigate('/courses');
-                        }}
-                        >Courses</Button>
-
-                  Hello, {userEmail}
+                  {/* Hello, {userEmail} */}
                   
                   <Button color="inherit"
                         onClick={()=>{
@@ -65,18 +75,20 @@ function ButtonAppBar() {
                               isLoading: false,
                               userEmail: null
                             })
+                            navigate('/');
                         }}
                         >Logout</Button>
 
                 </Toolbar>
               </AppBar>
+              <SwipeableTemporaryDrawer state={state} setState={setState} toggleDrawer={toggleDrawer} ></SwipeableTemporaryDrawer>
             </Box>
           );
     }
 
     return (
       <Box sx={{ flexGrow: 1}}>
-        <AppBar position="static">
+        <AppBar position="static" style={{ backgroundColor: '#0b2d39' }}>
           <Toolbar>
             <IconButton
               size="large"
@@ -93,7 +105,7 @@ function ButtonAppBar() {
             <Button 
               color='inherit'
               onClick={()=> {
-                navigate('/register');
+                navigate('/SignUp');
               }}
                   >Sign up</Button>
             <Button 
@@ -104,6 +116,7 @@ function ButtonAppBar() {
               >Log in</Button>
           </Toolbar>
         </AppBar>
+        <SwipeableTemporaryDrawer state={state} setState={setState} toggleDrawer={toggleDrawer} ></SwipeableTemporaryDrawer>
       </Box>
   );
 }
